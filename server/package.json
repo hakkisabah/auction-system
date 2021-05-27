@@ -1,0 +1,29 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "private": true,
+  "description": "New Swagger API Project",
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "main": "app.js",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "express": "^4.12.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.6.9",
+    "mongoose": "^5.12.11",
+    "pug": "^3.0.2",
+    "redis": "^3.1.2",
+    "swagger-express-mw": "^0.7.0",
+    "ws": "^7.4.6"
+  },
+  "devDependencies": {
+    "should": "^7.1.0",
+    "supertest": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "swagger project test"
+  }
+}

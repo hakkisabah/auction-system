@@ -1,0 +1,88 @@
+doctype html
+html(lang="en")
+    head
+        title= 'Auction'
+    body
+        h1 Product Id #{productId}
+        p productName #{productName}
+        p productPrice #{productPrice}
+        form(id='bidding', method='POST')
+            if lastBid == 0
+                p#lastbid lastBid #{productPrice}
+                input#bid
+            else if lastBid > 0
+                p#lastbid lastBid #{lastBid}
+                input#bid
+            input(type='submit', value='Submit')
+    if lastBid == 0 || lastBid > 0
+        script(type="text/javascript").
+          let isBid = 0
+          let interval;
+          try {
+            const connection = new WebSocket('ws://localhost:10010/events');
+            const cookie = getCookie('AuctionUser');
+            connection.onopen = () => {
+              interval = setInterval(() => {
+                const data = { cookie: cookie, isBid: isBid }
+                connection.send(JSON.stringify(data));
+              }, 1000);
+            };
+            connection.onerror = () => {
+              clearInterval(interval);
+              document.cookie =
+                'AuctionUser= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+              connection.close();
+              return;
+            };
+            connection.onclose = () => {
+              document.cookie =
+                'AuctionUser= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+              alert('Please refresh page');
+              return;
+            };
+            connection.onmessage = e => {
+              document.getElementById('lastbid').textContent = "lastBid " + e.data
+            }
+          } catch (e) {
+            clearInterval(interval);
+            alert('Error');
+          }
+          document.getElementById("bidding").addEventListener("submit", (event) => {
+            event.preventDefault();
+            const lastBid = document.getElementById("bid").value
+            const payload = {
+              name: "productBid",
+              currentBid: lastBid,
+              userToken: getCookie('AuctionUser')
+            }
+            const xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+            const theUrl = "/bid";
+            xmlhttp.onreadystatechange = function() {
+              if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+                const res = JSON.parse(xmlhttp.responseText)
+                if (res.success){
+                  document.getElementById('lastbid').textContent = "lastBid " + res.success
+                }else{
+                  alert(res.error)
+                }
+              }
+            }
+            xmlhttp.open("POST", theUrl);
+            xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xmlhttp.send(JSON.stringify(payload));
+          })
+
+          function getCookie(cname) {
+            const name = cname + '=';
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+              let c = ca[i];
+              while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+              }
+              if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+              }
+            }
+            return '';
+          }

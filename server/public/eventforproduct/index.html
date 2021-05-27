@@ -1,0 +1,54 @@
+<html>
+<head>
+  <title>Server Sent Events</title>
+</head>
+<body>
+<div id='updates'></div>
+</body>
+<script type='text/javascript'>
+  console.log(window.location.pathname)
+  try {
+    const connection = new WebSocket('ws://localhost:10010/events');
+
+    const cookie = getCookie('AuctionUser');
+
+    let interval;
+    connection.onopen = () => {
+      interval = setInterval(() => {
+        connection.send(cookie);
+      }, 2000);
+    };
+    connection.onerror = () => {
+      clearInterval(interval);
+      document.cookie =
+        'AuctionUser= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+      connection.close();
+      return;
+    };
+    connection.onclose = () => {
+      document.cookie =
+        'AuctionUser= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+      alert('Please refresh page');
+      return;
+    };
+  } catch (e) {
+    alert('Error');
+  }
+
+
+  function getCookie(cname) {
+    const name = cname + '=';
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return '';
+  }
+</script>
+</html>

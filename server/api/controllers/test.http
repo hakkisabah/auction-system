@@ -1,0 +1,8 @@
+POST http://localhost:10010/bid
+Content-Type: application/json
+
+{
+  "name": "productBid",
+  "currentBid": 25,
+  "userToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjRnMzVuMmplcjN6IiwicHJvZHVjdElkIjoyLCJwcm9kdWN0TmFtZSI6Inl5IiwicHJvZHVjdFByaWNlIjoyMCwiaXNBdWN0aW9uIjoxLCJmaW5hbFF1b3RhdGlvbiI6MCwibGFzdEJpZCI6MH0sImlhdCI6MTYyMjExOTU2NX0.ps2b2ZbXXGz4Le5rksqSTB8mtSa6iOs7cVmwoFgsgRk"
+}

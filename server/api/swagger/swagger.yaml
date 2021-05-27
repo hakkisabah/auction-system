@@ -1,0 +1,98 @@
+swagger : "2.0"
+info :
+  version : "0.0.1"
+  title : Auction Example
+# during dev, should point to your local machine
+host : localhost:10010
+# basePath prefixes all resource paths 
+basePath : /
+# 
+schemes :
+  # tip: remove http to make production-grade
+  - http
+  - https
+  - wss
+# format of bodies a client can send (Content-Type)
+consumes :
+  - application/json
+  - text/event-stream
+# format of the responses to the client (Accepts)
+produces :
+  - application/json
+  - text/event-stream
+paths :
+  /productSave:
+    x-swagger-router-controller : save_product
+    post:
+      summary: Save a product
+      operationId: save_product
+      parameters :
+        - name: productName
+          in : body
+          description: need product items
+          required : true
+          schema :
+            $ref : '#/definitions/product'
+      responses :
+        "200" :
+          description : Saved product
+  /bid:
+    x-swagger-router-controller : bid
+    post:
+      summary: Bid a price
+      operationId: bid
+      parameters :
+        - name : productBid
+          in : body
+          description : productId for bidding
+          required : true
+          schema :
+            $ref : '#/definitions/product'
+      responses:
+        "200":
+          description: Bid any product
+  /events:
+    x-swagger-router-controller : events
+    get:
+      description: Check requested and required events.
+      operationId: events
+      responses:
+        "200":
+          description: Listening success
+  /product/{id} :
+    x-swagger-router-controller : product
+    get :
+      description : A procut
+      operationId : product
+      parameters :
+        - name : id
+          in : path
+          description : Id of the product
+          required : true
+          type: string
+      responses :
+        "200" :
+          description : A product object
+          schema :
+            $ref : '#/definitions/product'
+  / :
+    # binds a127 app logic to a route
+    x-swagger-router-controller : products
+    get :
+      description : All Products here
+      # used as the method name of the controller
+      operationId : products
+      responses :
+        "200" :
+          description : A User object
+          schema :
+            $ref : '#/definitions/products'
+  /swagger :
+    x-swagger-pipe : swagger_raw
+definitions :
+  product :
+    type : object
+  products :
+    type : array
+    items :
+      type : object
